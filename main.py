@@ -1,12 +1,8 @@
 import logging
-import nest_asyncio
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton, Contact
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from telegram.error import TelegramError, BadRequest
-
-# Разрешаем вложенные event loops (для совместимости)
-nest_asyncio.apply()
 
 # Настройка логирования
 logging.basicConfig(
@@ -20,7 +16,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 CHANNEL_USERNAME = os.getenv('CHANNEL_USERNAME')
 OWNER_CHAT_ID = int(os.getenv('OWNER_CHAT_ID', '0'))
 
-# ГЛАВНЫЕ ФУНКЦИИ БОТА (ТАКИЕ ЖЕ КАК В COLAB)
+# ГЛАВНЫЕ ФУНКЦИИ БОТА (БЕЗ nest_asyncio)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /start - предлагает подписаться на канал"""
@@ -204,8 +200,7 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         # Отправляем контакт владельцу
         await context.bot.send_contact(
             chat_id=OWNER_CHAT_ID,
-            contact=contact,
-            # Без caption - как в рабочем варианте
+            contact=contact
         )
         
         # Отправляем дополнительное текстовое сообщение с деталями
