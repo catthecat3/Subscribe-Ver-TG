@@ -270,7 +270,7 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await update.message.reply_text(
         f"✅ Отлично, {contact.first_name}!\n\n"
         "Передал ваш контакт Марине Кузьминичне!\n\n"
-        "🙌 В течение 15 минут она свяжется и запишет на консультацию!",
+        "🙌 В течении 15 минут она свяжется с Вами и запишет на консультацию!",
         reply_markup=ReplyKeyboardRemove(),
         parse_mode='HTML'
     )
