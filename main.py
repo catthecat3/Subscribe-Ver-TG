@@ -44,7 +44,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 Чтобы записаться на персональный разбор, подпишитесь на наш канал:
 
-После подписки нажми кнопку ниже 👇"""
+После подписки нажми кнопку ниже"""
     
     await update.message.reply_text(text, reply_markup=reply_markup, parse_mode='HTML')
 
