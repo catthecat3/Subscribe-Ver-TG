@@ -34,14 +34,15 @@ logger.info(f"🔍 DEBUG: OWNER_CHAT_ID: {'НАЙДЕН' if OWNER_CHAT_ID else '
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /start - предлагает подписаться на канал"""
-    keyboard = [[InlineKeyboardButton("✅ Я подписался!", callback_data='check_sub')]]
+    keyboard = [
+        [InlineKeyboardButton("📌Подписаться", url=f"https://t.me/{CHANNEL_USERNAME.lstrip('@')}")],
+        [InlineKeyboardButton("✅ Подписался/-ась 🙂‍↕️", callback_data='check_sub')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    text = f"""🔥 Привет! 
+    text = f"""Приятно познакомиться, ***! 🙌 
+Я - виртуальны ассистент Марины Кузьминичны.
 
-Чтобы получить доступ к контенту, подпишись на наш канал:
-
-📢 {CHANNEL_USERNAME}
+Чтобы записаться на персональный разбор, подпишитесь на наш канал:
 
 После подписки нажми кнопку ниже 👇"""
     
@@ -73,11 +74,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             
             # Отправляем новое сообщение с кнопкой контакта
             await query.message.reply_text(
-                f"""🎉 Отлично, {first_name}! 
+                f"""🎉 Прекрасно, {first_name}! 
 
-Ты успешно подписался!
+Вижу Вашу подписку!
 
-📝 Теперь поделись своим номером телефона, нажав кнопку ниже:""",
+📝 Поделитесь, пожалуйста, вашим контактом, чтобы записаться на консультацию.:""",
+                Нажмите на кнопку ⬇️
                 reply_markup=reply_markup,
                 parse_mode='HTML'
             )
@@ -97,13 +99,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             context.user_data['retry_count'] = retry_count + 1
             
             # Создаем уникальный текст для избежания "Message is not modified"
-            new_text = f"""⚠️ {first_name}, ты ещё не подписан на канал {CHANNEL_USERNAME}!
+            new_text = f"""⚠️ {first_name}, К сожалению, вы ещё не подписались..
 
-📢 Пожалуйста, подпишись и попробуй снова!
+📢 Пожалуйста, подпишись и попробуй снова! {CHANNEL_USERNAME}!
 
 (Попытка #{retry_count + 1})"""
             
-            keyboard = [[InlineKeyboardButton("🔄 Попробовать снова", callback_data='check_sub')]]
+            keyboard = [
+                [InlineKeyboardButton("📌Подписаться", url=f"https://t.me/{CHANNEL_USERNAME.lstrip('@')}")],
+                [InlineKeyboardButton("🔄 Попробовать снова", callback_data='check_sub')]]
             reply_markup = InlineKeyboardMarkup(keyboard)
             
             try:
@@ -250,11 +254,11 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     markup = ReplyKeyboardMarkup([[]], resize_keyboard=True, one_time_keyboard=True)
     
     await update.message.reply_text(
-        f"""✅ Спасибо, {contact.first_name}! 
+        f"""✅ Отлично! {contact.first_name}! 
 
-Твои данные успешно отправлены.
+Передал Ваш контакт Марине Кузьминичне!
 
-🎁 Скоро с тобой свяжутся!""",
+🙌 В течении 15 минут она с вами свяжется и запишет на консультацию!""",
         reply_markup=markup,
         parse_mode='HTML'
     )
