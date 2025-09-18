@@ -62,10 +62,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "Я — виртуальный ассистент Марины Кузьминичны.\n\n"
         "Чтобы записаться на персональный разбор, подпишитесь на наш канал:\n\n"
         f"<a href=\"{link}\">📌Подписаться</a>\n\n"
-        "После подписки нажми кнопку ниже"
+        "После подписки нажимайте кнопку ниже👇"
     )
 
-    await update.message.reply_text(text, reply_markup=reply_markup, parse_mode='HTML')
+    await update.message.reply_text(text, reply_markup=reply_markup, parse_mode='HTML', disable_web_page_preview=True)
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик кнопки проверки подписки"""
@@ -94,7 +94,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 f"🎉 Прекрасно, {first_name}!\n\n"
                 "Вижу Вашу подписку!\n\n"
                 "📝 Поделитесь, пожалуйста, Вашим контактом, чтобы записаться на консультацию.\n\n"
-                "Нажмите на кнопку ⬇️\n",
+                "Нажмите на кнопку 👇\n",
                 reply_markup=reply_markup,
                 parse_mode='HTML'
             )
@@ -130,7 +130,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 await query.edit_message_text(
                     text=new_text,
                     reply_markup=reply_markup,
-                    parse_mode='HTML'
+                    parse_mode='HTML',
+                    disable_web_page_preview=True
                 )
             except BadRequest as e:
                 if "message is not modified" in str(e).lower():
@@ -145,7 +146,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     await query.message.reply_text(
                         new_text,
                         reply_markup=reply_markup,
-                        parse_mode='HTML'
+                        parse_mode='HTML',
+                        disable_web_page_preview=True
                     )
             except Exception as e:
                 logger.error(f"Ошибка редактирования сообщения: {e}")
