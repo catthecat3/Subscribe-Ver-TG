@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+from datetime import timedelta
 from telegram import (
     Update,
     InlineKeyboardButton,
@@ -224,7 +225,9 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         f"📞 <b>Телефон:</b> <code>{contact.phone_number}</code>\n"
         f"🆔 <b>User ID:</b> <code>{user.id}</code>\n"
         f"🔗 <b>Username:</b> @{user.username or 'Не указан'}\n"
-        f"📅 <b>Дата:</b> {update.message.date.strftime('%d.%m.%Y %H:%M')}"
+        dt_plus3 = update.message.date + timedelta(hours=3)
+        ...
+        f"📅 <b>Дата:</b> {dt_plus3.strftime('%d.%m.%Y %H:%M')}"
     )
 
     try:
@@ -267,7 +270,7 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await update.message.reply_text(
         f"✅ Отлично, {contact.first_name}!\n\n"
         "Передал ваш контакт Марине Кузьминичне!\n\n"
-        "🙌 В течение 15 минут она свяжется и запишет на консультацию!",
+        "🙌 В течении 15 минут она свяжется с Вами и запишет на консультацию!",
         reply_markup=ReplyKeyboardRemove(),
         parse_mode='HTML'
     )
