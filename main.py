@@ -258,20 +258,20 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
             pass
 
 def run_bot():
-    """Запуск бота для Render"""
+    """Запуск бота для Railway"""
     # Проверка настроек
     if not BOT_TOKEN:
-        logger.error("❌ ОШИБКА: Не установлен BOT_TOKEN! Проверьте Environment Variables в Render")
+        logger.error("❌ ОШИБКА: Не установлен BOT_TOKEN! Проверьте Environment Variables в Railway")
         return
     
     if not CHANNEL_USERNAME:
-        logger.error("❌ ОШИБКА: Не установлен CHANNEL_USERNAME! Проверьте Environment Variables в Render")
+        logger.error("❌ ОШИБКА: Не установлен CHANNEL_USERNAME! Проверьте Environment Variables в Railway")
         return
     
     try:
         owner_id = int(OWNER_CHAT_ID)
     except ValueError:
-        logger.error("❌ ОШИБКА: OWNER_CHAT_ID должен быть числом! Проверьте Environment Variables в Render")
+        logger.error("❌ ОШИБКА: OWNER_CHAT_ID должен быть числом! Проверьте Environment Variables в Railway")
         return
     
     # Создание приложения (v21)
