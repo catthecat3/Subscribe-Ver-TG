@@ -20,12 +20,13 @@ OWNER_CHAT_ID = int(os.getenv('OWNER_CHAT_ID', '0'))
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /start - предлагает подписаться на канал"""
-    keyboard = [[InlineKeyboardButton("✅ Я подписался!", callback_data='check_sub')]]
+    keyboard = [[InlineKeyboardButton("✅ Подписался/-ась 🙂‍↕️", callback_data='check_sub')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    text = f"""🔥 Привет! 
+    text = f"""Приятно познакомиться, {first_name}! 🙌 
+Я - виртуальный ассистент Марины Кузьминичны.
 
-Чтобы получить доступ к контенту, подпишись на наш канал:
+Чтобы записаться на персональный разбор, подпишитесь на наш канал:
 
 📢 {CHANNEL_USERNAME}
 
@@ -50,7 +51,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             # Пользователь подписан - просим контакт
             logger.info(f"✅ Пользователь {user_id} (@{username}) подписан")
             
-            keyboard = [[KeyboardButton("📱 Поделиться номером", request_contact=True)]]
+            keyboard = [[KeyboardButton("📱 Поделиться контактом", request_contact=True)]]
             reply_markup = ReplyKeyboardMarkup(
                 keyboard, 
                 resize_keyboard=True, 
@@ -59,11 +60,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             
             # Отправляем новое сообщение с кнопкой контакта
             await query.message.reply_text(
-                f"""🎉 Отлично, {first_name}! 
+                f"""🎉 Прекрасно, {first_name}! 
 
-Ты успешно подписался!
+Вижу Вашу подписку!
 
-📝 Теперь поделись своим номером телефона, нажав кнопку ниже:""",
+📝 Поделитесь, пожалуйста, вашим контактом, чтобы записаться на консультацию.:""",
                 reply_markup=reply_markup,
                 parse_mode='HTML'
             )
@@ -83,9 +84,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             context.user_data['retry_count'] = retry_count + 1
             
             # Создаем уникальный текст для избежания "Message is not modified"
-            new_text = f"""⚠️ {first_name}, ты еще не подписан на канал {CHANNEL_USERNAME}!
+            new_text = f"""⚠️ {first_name}, к сожалению, вы ещё не подписались..
 
-📢 Пожалуйста, подпишись и попробуй снова!
+📢 Пожалуйста, подпишись и попробуй снова! {CHANNEL_USERNAME}!
 
 (Попытка #{retry_count + 1})"""
             
@@ -236,11 +237,11 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     markup = ReplyKeyboardMarkup([[]], resize_keyboard=True, one_time_keyboard=True)
     
     await update.message.reply_text(
-        f"""✅ Спасибо, {contact.first_name}! 
+        f"""✅ Отлично!, {contact.first_name}! 
 
-Твои данные успешно отправлены.
+Передал Ваш контакт Марине Кузьминичне!
 
-🎁 Скоро с тобой свяжутся!""",
+🙌 В течении 15 минут она с вами свяжется и запишет на консультацию!""",
         reply_markup=markup,
         parse_mode='HTML'
     )
