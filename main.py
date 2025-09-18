@@ -47,6 +47,15 @@ def channel_link(username: str) -> str:
 
 # ГЛАВНЫЕ ФУНКЦИИ БОТА (ТОЧНО КАК В РАБОЧЕМ ВАРИАНТЕ)
 
+async def keep_alive():
+    """Keep-Alive: Пинг каждые 30 минут для поддержания активности"""
+    while True:
+        try:
+            logger.info(f"🔄 Keep-Alive: Бот активен | Время: {datetime.now().strftime('%H:%M:%S')} | Статус: 🟢")
+        except Exception as e:
+            logger.warning(f"Keep-Alive error: {e}")
+        await asyncio.sleep(1800)  # 30 минут
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /start - предлагает подписаться на канал"""
     keyboard = [
@@ -278,14 +287,26 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     )
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Обработчик ошибок"""
-    logger.error(f"Обновление {update} вызвало ошибку {context.error}")
-    # Если это callback_query, пытаемся ответить пользователю
-    try:
-        if update and hasattr(update, 'callback_query') and update.callback_query:
+    """Обработчик ошибок с уведомлением о падении"""
+    error_msg = f"Обновление {update} вызвало ошибку {context.error}"
+    logger.error(error_msg)
+    
+    # Уведомление владельцу о критических ошибках
+    if any(critical in str(context.error).lower() for critical in ["connectionerror", "timeout", "terminated"]):
+        try:
+            await context.bot.send_message(
+                chat_id=OWNER_CHAT_ID,
+                text=f"🚨 БОТ УПАЛ! 😰\n\nОшибка: {error_msg}\n\nВремя: {datetime.now().strftime('%d.%m.%Y %H:%M')}\n\n🔄 Авторестарт через 10 сек..."
+            )
+        except:
+            pass
+    
+    # Стандартная обработка
+    if update and hasattr(update, 'callback_query') and update.callback_query:
+        try:
             await update.callback_query.answer("Произошла ошибка. Попробуйте позже.", show_alert=True)
-    except Exception:
-        pass
+        except Exception:
+            pass
 
 def run_bot():
     """Запуск бота для Railway"""
