@@ -120,7 +120,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             )
 
             keyboard = [
-                [InlineKeyboardButton("📌Подписаться", url=link)],
                 [InlineKeyboardButton("🔄 Попробовать снова", callback_data='check_sub')]
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
