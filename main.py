@@ -16,7 +16,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 CHANNEL_USERNAME = os.getenv('CHANNEL_USERNAME')
 OWNER_CHAT_ID = int(os.getenv('OWNER_CHAT_ID', '0'))
 
-# ГЛАВНЫЕ ФУНКЦИИ БОТА (БЕЗ nest_asyncio)
+# ГЛАВНЫЕ ФУНКЦИИ БОТА (АДАПТИРОВАНО ПОД v21)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /start - предлагает подписаться на канал"""
@@ -83,7 +83,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             context.user_data['retry_count'] = retry_count + 1
             
             # Создаем уникальный текст для избежания "Message is not modified"
-            new_text = f"""⚠️ {first_name}, ты ещё не подписан на канал {CHANNEL_USERNAME}!
+            new_text = f"""⚠️ {first_name}, ты еще не подписан на канал {CHANNEL_USERNAME}!
 
 📢 Пожалуйста, подпишись и попробуй снова!
 
@@ -163,7 +163,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 🔧 Техническая команда уже работает над проблемой.
 
-Пожалуйста, попробуй ещё раз через минуту:"""
+Пожалуйста, попробуй еще раз через минуту:"""
         
         keyboard = [[InlineKeyboardButton("🔄 Попробовать снова", callback_data='check_sub')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -273,7 +273,7 @@ def run_bot():
         logger.error("❌ ОШИБКА: OWNER_CHAT_ID должен быть числом! Проверьте Environment Variables в Render")
         return
     
-    # Создание приложения
+    # Создание приложения (v21)
     application = Application.builder().token(BOT_TOKEN).build()
     
     # Добавление обработчиков
@@ -289,13 +289,12 @@ def run_bot():
     logger.info("📱 Бот готов к работе!")
     logger.info("=" * 60)
     
-    # Запуск polling с настройками для Render
+    # Запуск polling (v21 - упрощенный синтаксис)
     application.run_polling(
         drop_pending_updates=True,
         poll_interval=1.0,
         timeout=10,
-        bootstrap_retries=5,
-        allowed_updates=Update.ALL_TYPES
+        bootstrap_retries=5
     )
 
 # ЗАПУСК БОТА
