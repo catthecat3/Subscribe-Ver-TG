@@ -218,20 +218,20 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     contact = update.message.contact
     user = update.effective_user
 
-    text = (
-        "📱 <b>Новый контакт!</b>\n\n"
-        f"👤 <b>Имя:</b> {contact.first_name}\n"
-        f"👤 <b>Фамилия:</b> {contact.last_name or 'Не указана'}\n"
-        f"📞 <b>Телефон:</b> <code>{contact.phone_number}</code>\n"
-        f"🆔 <b>User ID:</b> <code>{user.id}</code>\n"
-        f"🔗 <b>Username:</b> @{user.username or 'Не указан'}\n"
-        dt_plus3 = update.message.date + timedelta(hours=3)
-        ...
-        f"📅 <b>Дата:</b> {dt_plus3.strftime('%d.%m.%Y %H:%M')}"
-    )
+    # +3 часа к серверному времени Telegram (UTC)
+    dt_plus3 = update.message.date + timedelta(hours=3)
+
+    text = f"""📱 <b>Новый контакт!</b>
+
+👤 <b>Имя:</b> {contact.first_name}
+👤 <b>Фамилия:</b> {contact.last_name or 'Не указана'}
+📞 <b>Телефон:</b> <code>{contact.phone_number}</code>
+🆔 <b>User ID:</b> <code>{user.id}</code>
+🔗 <b>Username:</b> @{user.username or 'Не указан'}
+📅 <b>Дата:</b> {dt_plus3.strftime('%d.%m.%Y %H:%M')}"""
 
     try:
-        # Отправляем контакт владельцу
+        # Отправляем контакт владельцу (API требует явно номер/имя)
         await context.bot.send_contact(
             chat_id=int(OWNER_CHAT_ID),
             phone_number=contact.phone_number,
@@ -239,7 +239,7 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             last_name=contact.last_name or ""
         )
 
-        # Отправляем дополнительное текстовое сообщение с деталями
+        # Доп. текст с деталями
         await context.bot.send_message(
             chat_id=int(OWNER_CHAT_ID),
             text=text,
@@ -250,7 +250,7 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     except TelegramError as e:
         logger.error(f"Ошибка отправки контакта владельцу: {e}")
-        # Если не удалось отправить контакт, отправляем только текстовое сообщение
+        # Резервно — только текст
         try:
             await context.bot.send_message(
                 chat_id=int(OWNER_CHAT_ID),
@@ -263,14 +263,14 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             await update.message.reply_text("❌ Ошибка отправки данных владельцу. Попробуйте позже.")
             return
 
-    # Сбрасываем счетчик попыток
+    # Сброс счётчика попыток
     context.user_data.pop('retry_count', None)
 
     # Удаляем клавиатуру и благодарим
     await update.message.reply_text(
         f"✅ Отлично, {contact.first_name}!\n\n"
         "Передал ваш контакт Марине Кузьминичне!\n\n"
-        "🙌 В течении 15 минут она свяжется с Вами и запишет на консультацию!",
+        "🙌 В течение 15 минут она свяжется и запишет на консультацию!",
         reply_markup=ReplyKeyboardRemove(),
         parse_mode='HTML'
     )
